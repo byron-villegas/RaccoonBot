@@ -27,7 +27,7 @@ const globalCommands = [
     },
     {
         name: 'stop',
-        description: 'Stop the song and clear the queue'
+        description: 'Stop song and clear the queue'
     },
     {
         name: 'queue',

@@ -1,8 +1,5 @@
 # node modules
 /node_modules
 
-# sounds
-/sounds
-
 # dotenv environment variable files
 .env
