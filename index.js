@@ -3,7 +3,7 @@ require('dotenv').config(); // Load .env file
 const colors = require('colors');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Player, useTimeline, useQueue } = require('discord-player');
-const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
+const { createAudioPlayer, createAudioResource, joinVoiceChannel, VoiceConnectionStatus } = require('@discordjs/voice');
 const path = require('path');
 const play = require('play-dl');
 const SpotifyWebApi = require('spotify-web-api-node');
@@ -47,6 +47,8 @@ const playlist = player.createPlaylist({
     type: 'playlist',
     tracks: []
 });
+
+let destroyTimeout;
 
 // NOT USED
 // Emitted when the player starts to play a song
@@ -369,7 +371,7 @@ client.on('messageCreate', async (message) => {
 
     // Mapping of words to audio responses
     const defaultSoundResponseForWord = {
-        'dross': ['dross/Empanadas.mp3', 'dross/Piano.mp3', 'dross/Coño.mp3', 'dross/Verga.mp3', 'dross/Ustedes Son Imbeciles.mp3', 'dross/Te Ha Hablado Dross.mp3'],
+        'dross': ['dross/Empanadas.mp3', 'dross/Te Ha Hablado Dross.mp3', 'dross/Piano.mp3', 'dross/Coño.mp3', 'dross/Verga.mp3', 'dross/Ustedes Son Imbeciles.mp3'],
         'empanada': ['dross/Empanadas.mp3'],
         'empanadas': ['dross/Empanadas.mp3'],
         'chile': ['chile/Callate Vo Vieja Culia.mp3', 'chile/Oye Aweonao.mp3', 'chile/Se Escucha Alla Atras.mp3', 'chile/Y Me Le Ocurrio Otra Idea.mp3'],
@@ -399,12 +401,12 @@ client.on('messageCreate', async (message) => {
             connection.subscribe(audioPlayer);
             audioPlayer.play(resource);
 
-            // Disconnect the bot after 15 seconds of inactivity
-            setTimeout(() => {
-                connection.destroy();
-                console.log(colors.gray('Disconnected due to inactivity'));
-            }, 15000);
-
+            audioPlayer.on('stateChange', (oldState, newState) => {
+                if(newState.status == 'idle') { // If the audio player is idle, end the connection
+                    connection.destroy();
+                }
+            });
+            
             return; // Exit the loop after finding the first matching word
         }
     }
