@@ -2,13 +2,13 @@ require('dotenv').config(); // Load .env file
 
 const colors = require('colors');
 const { Client, GatewayIntentBits } = require('discord.js');
-const { Player, useTimeline, useQueue, GuildQueueEvent } = require('discord-player');
+const { Player, useTimeline, useQueue } = require('discord-player');
 const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
 const path = require('path');
 const play = require('play-dl');
 const SpotifyWebApi = require('spotify-web-api-node');
 const ytdl = require('@distube/ytdl-core');
-const globalCommands = require('./app/commands/global-commands');
+const globalCommands = require('./global-commands');
 
 const APPLICATION = process.env.APPLICATION;
 
@@ -393,7 +393,7 @@ client.on('messageCreate', async (message) => {
             });
 
             // Create an audio player and play the audio
-            const resource = createAudioResource(path.join(__dirname, 'app/sounds/' + randomAudioResponse));
+            const resource = createAudioResource(path.join(__dirname, 'sounds/' + randomAudioResponse));
             const audioPlayer = createAudioPlayer();
 
             connection.subscribe(audioPlayer);
