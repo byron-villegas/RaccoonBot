@@ -265,6 +265,7 @@ client.on('interactionCreate', async (interaction) => {
             interaction.reply('> ⏭️ The current song has been skipped.');
             break;
         case 'stop':
+            playlist.tracks = [];
             queue.delete();
 
             interaction.reply('> ⏹️ The queue has been stopped.');
