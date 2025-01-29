@@ -141,11 +141,11 @@ client.on('interactionCreate', async (interaction) => {
 
     const { commandName, options } = interaction;
 
-    const channel = interaction.member.voice.channel;
+    let channel = interaction.member.voice.channel;
 
-    const timeline = useTimeline({ node: interaction.guild.id });
+    let timeline = useTimeline({ node: interaction.guild.id });
 
-    const queue = useQueue(interaction.guild);
+    let queue = useQueue(interaction.guild);
 
     switch (commandName) {
         case 'play':
