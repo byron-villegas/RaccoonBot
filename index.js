@@ -156,14 +156,14 @@ client.on('interactionCreate', async (interaction) => {
                 break;
             }
 
-            if (playlist.tracks.filter(track => track.url == query).length > 0) {
-                interaction.reply('> ⚠️ The song is already in the playlist.');
-                break;
-            }
-
             console.log(`Song ${query}`);
 
             if (query.includes('www.youtube.com') || query.includes('youtu.be')) {
+                if (playlist.tracks.filter(track => track.url == query).length > 0) {
+                    interaction.reply('> ⚠️ The song is already in the playlist.');
+                    break;
+                }
+
                 ytdl.getBasicInfo(query).then(info => {
                     console.log(`Song title ${info.videoDetails.title}`);
 
@@ -185,14 +185,11 @@ client.on('interactionCreate', async (interaction) => {
                         duration: info.videoDetails.lengthSeconds
                     });
 
-                    // Only play the song if there is no song playing
-                    if(!queue || !queue.isPlaying()) {
-                        playlist.play(channel, {
-                            nodeOptions: {
-                                metadata: interaction.channel
-                            }
-                        });
-                    }
+                    playlist.play(channel, {
+                        nodeOptions: {
+                            metadata: interaction.channel
+                        }
+                    });
 
                     interaction.reply(`> ✅ Added **[${info.videoDetails.title}](${query})** to the queue!!`);
                 });
@@ -209,12 +206,12 @@ client.on('interactionCreate', async (interaction) => {
 
                 const trackName = track.body.name + '-' + track.body.artists[0].name;
 
-                playSongBySearch(trackName, interaction, channel, queue);
+                playSongBySearch(trackName, interaction, channel);
 
                 break;
             }
 
-            playSongBySearch(query, interaction, channel, queue);
+            playSongBySearch(query, interaction, channel);
 
             break;
         case 'pause':
@@ -245,7 +242,7 @@ client.on('interactionCreate', async (interaction) => {
 
             timeline.resume();
 
-            interaction.reply('>▶️ The player has been resumed!!');
+            interaction.reply('> ▶️ The player has been resumed!!');
             break;
         case 'skip':
             if (!queue) {
@@ -256,6 +253,13 @@ client.on('interactionCreate', async (interaction) => {
             if (!queue.isPlaying()) {
                 interaction.reply('> ⚠️ There is no song playing.');
                 break;
+            }
+
+            if(playlist.tracks.length == 1) {
+                playlist.tracks = [];
+                queue.delete();
+                interaction.reply('> ⏹️ The queue has been stopped.');
+                return;
             }
 
             // Skip the current track
@@ -283,11 +287,11 @@ client.on('interactionCreate', async (interaction) => {
 
             const queueDurationInSeconds = playlist.tracks.map(track => parseInt(track.duration)).reduce((a, b) => a + b);
 
-            const queueDuration = queueDurationInSeconds / 60;
+            const queueDuration = (queueDurationInSeconds / 60).toFixed(2);
 
             const queueList = '\n' + playlist.tracks
-            .map((track, index) => `> ${index + 1}. **[${track.title}](${track.url})**`)
-            .join('\n') + `\n\n> Total duration: ${queueDuration} minutes approx.`;
+                .map((track, index) => `> ${index + 1}. **[${track.title}](${track.url})**`)
+                .join('\n') + `\n\n> Total duration: ${queueDuration} minutes approximatly.`;
 
             interaction.reply(`> Queue List ${queueList}`);
 
@@ -335,17 +339,20 @@ client.on('messageCreate', async (message) => {
         'wena',
         'hola',
         'dross',
+        'noni',
+        'miku',
         'empanada',
         'empanadas',
         'chile',
         'japon',
+        'calamar',
         'lol',
         'random'
     ];
 
     const foundWord = words.find(word => message.content.toLowerCase().includes(word));
 
-    if(!foundWord) {
+    if (!foundWord) {
         message.channel.send('> ⚠️ I do not understand what you are saying.');
         return;
     }
@@ -373,10 +380,13 @@ client.on('messageCreate', async (message) => {
     // Mapping of words to audio responses
     const defaultSoundResponseForWord = {
         'dross': ['dross/Empanadas.mp3', 'dross/Te Ha Hablado Dross.mp3', 'dross/Piano.mp3', 'dross/Coño.mp3', 'dross/Verga.mp3', 'dross/Ustedes Son Imbeciles.mp3'],
+        'noni': ['noni/Ahh.mp3' , 'noni/Oh Que Guapo.mp3', 'noni/Uh La La.mp3', 'noni/Hemos Abierto El Negocio.mp3', 'noni/Le Puedo Pagar.mp3'],
+        'miku': ['miku/Levan Polka.mp3', 'miku/Miku Miku Miku.mp3'],
         'empanada': ['dross/Empanadas.mp3'],
         'empanadas': ['dross/Empanadas.mp3'],
         'chile': ['chile/Callate Vo Vieja Culia.mp3', 'chile/Oye Aweonao.mp3', 'chile/Se Escucha Alla Atras.mp3', 'chile/Y Me Le Ocurrio Otra Idea.mp3'],
         'japon': ['japan/HA HOI AAEAHHHH.mp3', 'japan/Omae Wa Mou Shindeiru.mp3'],
+        'calamar': ['squid/Yo Ya Estuve En Estos Juegos.mp3', 'squid/Alto.mp3'],
         'lol': ['lol/Ahora Me Ves Ahora No Me Ves.mp3', 'lol/El Tamaño No Lo Es Todo.mp3'],
         'random': ['random/Ay Dios Mio.mp3', 'random/El Lado Misterioso De La Isla.mp3', 'random/Guatona Con Moño.mp3', 'random/Maraca Maraca.mp3', 'random/Me Electrocutaste Pedrito.mp3']
     }
@@ -387,7 +397,7 @@ client.on('messageCreate', async (message) => {
         if (message.content.toLowerCase().includes(word)) {
             // Select a random audio for the word
             const randomAudioResponse = responses[Math.floor(Math.random() * responses.length)];
-            
+
             // Connect to the voice channel
             const connection = joinVoiceChannel({
                 channelId: channel.id,
@@ -403,19 +413,24 @@ client.on('messageCreate', async (message) => {
             audioPlayer.play(resource);
 
             audioPlayer.on('stateChange', (oldState, newState) => {
-                if(newState.status == 'idle') { // If the audio player is idle, end the connection
+                if (newState.status == 'idle') { // If the audio player is idle, end the connection
                     connection.destroy();
                 }
             });
-            
+
             return; // Exit the loop after finding the first matching word
         }
     }
 });
 
-playSongBySearch = (title, interaction, channel, queue) => {
+playSongBySearch = (title, interaction, channel) => {
     play.search(title, { limit: 1 }).then(videos => {
         const videoFound = videos[0];
+
+        if (playlist.tracks.filter(track => track.url == videoFound.url).length > 0) {
+            interaction.reply('> ⚠️ The song is already in the playlist.');
+            return;
+        }
 
         console.log(`Song title ${videoFound.title}`);
 
@@ -439,12 +454,10 @@ playSongBySearch = (title, interaction, channel, queue) => {
 
         interaction.reply(`> ✅ Added **[${videoFound.title}](${videoFound.url})** to the queue!!`);
 
-        if(!queue || !queue.isPlaying()) {
-            playlist.play(channel, {
-                nodeOptions: {
-                    metadata: interaction.channel
-                }
-            });
-        }
+        playlist.play(channel, {
+            nodeOptions: {
+                metadata: interaction.channel
+            }
+        });
     });
 }
