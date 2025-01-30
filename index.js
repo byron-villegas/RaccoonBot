@@ -152,7 +152,7 @@ client.on('interactionCreate', async (interaction) => {
             const query = options.getString('query');
 
             if (!channel) {
-                interaction.reply('> ⚠️ You need to be in a voice channel to play music.');
+                await interaction.reply('> ⚠️ You need to be in a voice channel to play music.');
                 break;
             }
 
@@ -160,7 +160,7 @@ client.on('interactionCreate', async (interaction) => {
 
             if (query.includes('www.youtube.com') || query.includes('youtu.be')) {
                 if (playlist.tracks.filter(track => track.url == query).length > 0) {
-                    interaction.reply('> ⚠️ The song is already in the playlist.');
+                    await interaction.reply('> ⚠️ The song is already in the playlist.');
                     break;
                 }
 
@@ -198,8 +198,8 @@ client.on('interactionCreate', async (interaction) => {
 
             if (query.includes('open.spotify.com')) {
 
-                if(!query.includes('track')) {
-                    interaction.reply('> ⚠️ You need to provide a valid Spotify track URL.');
+                if (!query.includes('track')) {
+                    await interaction.reply('> ⚠️ You need to provide a valid Spotify track URL.');
                     break;
                 }
 
@@ -222,49 +222,49 @@ client.on('interactionCreate', async (interaction) => {
             break;
         case 'pause':
             if (!timeline) {
-                interaction.reply('> ⚠️ This server does not have an active player session.');
+                await interaction.reply('> ⚠️ This server does not have an active player session.');
                 break;
             }
 
             if (timeline.paused) {
-                interaction.reply('> ⚠️ The player is already paused.');
+                await interaction.reply('> ⚠️ The player is already paused.');
                 break;
             }
 
             timeline.pause();
 
-            interaction.reply('> ⏸️ The player is now paused.');
+            await interaction.reply('> ⏸️ The player is now paused.');
             break;
         case 'resume':
             if (!timeline) {
-                interaction.reply('>⚠️ This server does not have an active player session.');
+                await interaction.reply('>⚠️ This server does not have an active player session.');
                 break;
             }
 
             if (!timeline.paused) {
-                interaction.reply('>⚠️ The player is already playing.');
+                await interaction.reply('>⚠️ The player is already playing.');
                 break;
             }
 
             timeline.resume();
 
-            interaction.reply('> ▶️ The player has been resumed!!');
+            await interaction.reply('> ▶️ The player has been resumed!!');
             break;
         case 'skip':
             if (!queue) {
-                interaction.reply('> ⚠️ This server does not have an active player session.');
+                await interaction.reply('> ⚠️ This server does not have an active player session.');
                 break;
             }
 
             if (!queue.isPlaying()) {
-                interaction.reply('> ⚠️ There is no song playing.');
+                await interaction.reply('> ⚠️ There is no song playing.');
                 break;
             }
 
-            if(playlist.tracks.length == 1) {
-                playlist.tracks = [];
+            if (playlist.tracks.length == 1) {
                 queue.delete();
-                interaction.reply('> ⏹️ The queue has been stopped.');
+                playlist.tracks = [];
+                await interaction.reply('> ⏹️ The queue has been stopped.');
                 return;
             }
 
@@ -272,22 +272,22 @@ client.on('interactionCreate', async (interaction) => {
             queue.node.skip();
 
             // Send a confirmation message
-            interaction.reply('> ⏭️ The current song has been skipped.');
+            await interaction.reply('> ⏭️ The current song has been skipped.');
             break;
         case 'stop':
-            playlist.tracks = [];
             queue.delete();
+            playlist.tracks = [];
 
-            interaction.reply('> ⏹️ The queue has been stopped.');
+            await interaction.reply('> ⏹️ The queue has been stopped.');
             break;
         case 'queue':
             if (!queue) {
-                interaction.reply('> ⚠️ This server does not have an active player session.');
+                await interaction.reply('> ⚠️ This server does not have an active player session.');
                 break;
             }
 
             if (playlist.tracks.length == 0) {
-                interaction.reply('> ⚠️ The queue is empty.');
+                await interaction.reply('> ⚠️ The queue is empty.');
                 break;
             }
 
@@ -299,32 +299,32 @@ client.on('interactionCreate', async (interaction) => {
                 .map((track, index) => `> ${index + 1}. **[${track.title}](${track.url})**`)
                 .join('\n') + `\n\n> Total duration: ${queueDuration} minutes approximatly.`;
 
-            interaction.reply(`> Queue List ${queueList}`);
+            await interaction.reply(`> Queue List ${queueList}`);
 
             break;
         case 'roulette':
             if (!channel) {
-                interaction.reply('> ⚠️ You need to be in a voice channel to play roulette.');
+                await interaction.reply('> ⚠️ You need to be in a voice channel to play roulette.');
                 return;
             }
 
             const selectedNumber = options.getInteger('number');
 
             if (selectedNumber > 6 || selectedNumber < 1) {
-                interaction.reply('> ⚠️ You need to select a number between 1 and 6.');
+                await interaction.reply('> ⚠️ You need to select a number between 1 and 6.');
                 break;
             }
 
             const number = Math.floor(Math.random() * 6) + 1;
 
             if (selectedNumber == number) {
-                interaction.reply(`> 👋 See you later <@${interaction.member.id}>.`);
+                await interaction.reply(`> 👋 See you later <@${interaction.member.id}>.`);
 
                 interaction.member.voice.disconnect();
                 break;
             }
 
-            interaction.reply('> 🍀 You have been lucky.');
+            await interaction.reply('> 🍀 You have been lucky.');
             break;
     }
 });
@@ -359,7 +359,7 @@ client.on('messageCreate', async (message) => {
     const foundWord = words.find(word => message.content.toLowerCase().includes(word));
 
     if (!foundWord) {
-        message.channel.send('> ⚠️ I do not understand what you are saying.');
+        await message.channel.send('> ⚠️ I do not understand what you are saying.');
         return;
     }
 
@@ -377,7 +377,7 @@ client.on('messageCreate', async (message) => {
             const randomTextResponse = responses[Math.floor(Math.random() * responses.length)];
 
             // Send the random response
-            message.channel.send(randomTextResponse);
+            await message.channel.send(randomTextResponse);
 
             return; // Exit the loop after finding the first matching word
         }
@@ -386,7 +386,7 @@ client.on('messageCreate', async (message) => {
     // Mapping of words to audio responses
     const defaultSoundResponseForWord = {
         'dross': ['dross/Empanadas.mp3', 'dross/Te Ha Hablado Dross.mp3', 'dross/Piano.mp3', 'dross/Coño.mp3', 'dross/Verga.mp3', 'dross/Ustedes Son Imbeciles.mp3'],
-        'noni': ['noni/Ahh.mp3' , 'noni/Oh Que Guapo.mp3', 'noni/Uh La La.mp3', 'noni/Hemos Abierto El Negocio.mp3', 'noni/Le Puedo Pagar.mp3'],
+        'noni': ['noni/Ahh.mp3', 'noni/Oh Que Guapo.mp3', 'noni/Uh La La.mp3', 'noni/Hemos Abierto El Negocio.mp3', 'noni/Le Puedo Pagar.mp3'],
         'miku': ['miku/Levan Polka.mp3', 'miku/Miku Miku Miku.mp3'],
         'empanada': ['dross/Empanadas.mp3'],
         'empanadas': ['dross/Empanadas.mp3'],
