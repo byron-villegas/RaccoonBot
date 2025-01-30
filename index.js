@@ -197,6 +197,12 @@ client.on('interactionCreate', async (interaction) => {
             }
 
             if (query.includes('open.spotify.com')) {
+
+                if(!query.includes('track')) {
+                    interaction.reply('> ⚠️ You need to provide a valid Spotify track URL.');
+                    break;
+                }
+
                 const trackId = query.split('track/')[1].split('?')[0];
 
                 const data = await spotifyApi.clientCredentialsGrant();
