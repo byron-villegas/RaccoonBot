@@ -3,7 +3,7 @@ require('dotenv').config(); // Load .env file
 const colors = require('colors');
 const { Client, GatewayIntentBits } = require('discord.js');
 const { Player, useTimeline, useQueue } = require('discord-player');
-const { createAudioPlayer, createAudioResource, joinVoiceChannel, VoiceConnectionStatus } = require('@discordjs/voice');
+const { createAudioPlayer, createAudioResource, joinVoiceChannel } = require('@discordjs/voice');
 const path = require('path');
 const play = require('play-dl');
 const SpotifyWebApi = require('spotify-web-api-node');
@@ -47,13 +47,6 @@ const playlist = player.createPlaylist({
     type: 'playlist',
     tracks: []
 });
-
-const youtubeCookies = process.env.YOUTUBE_COOKIES.split(';').map(cookie => {
-    const [name, value] = cookie.split('=');
-    return { name, value };
-});
-
-const youtubeAgent = ytdl.createAgent(youtubeCookies);
 
 // NOT USED
 // Emitted when the player starts to play a song
@@ -169,11 +162,10 @@ client.on('interactionCreate', async (interaction) => {
                     break;
                 }
 
-                ytdl.getBasicInfo(query, { agent: youtubeAgent }).then(info => {
+                ytdl.getBasicInfo(query).then(info => {
                     console.log(`Song title ${info.videoDetails.title}`);
 
                     const videoStream = ytdl(query, {
-                        agent: youtubeAgent,
                         format: 'mp3',
                         highWaterMark: 1 << 62,
                         liveBuffer: 1 << 62,
@@ -447,7 +439,6 @@ playSongBySearch = (title, interaction, channel) => {
         console.log(`Song title ${videoFound.title}`);
 
         const videoStream = ytdl(videoFound.url, {
-            agent: youtubeAgent,
             format: 'mp3',
             highWaterMark: 1 << 62,
             liveBuffer: 1 << 62,
