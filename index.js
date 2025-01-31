@@ -455,6 +455,9 @@ playSongBySearch = (title, interaction, channel) => {
 
         console.log(`Song title ${videoFound.title}`);
 
+        interaction.reply(`> ✅ Added **[${videoFound.title}](${videoFound.url})** to the queue!!`);
+
+
         const videoStream = ytdl(videoFound.url, {
             format: 'mp3',
             highWaterMark: 1 << 62,
@@ -473,8 +476,6 @@ playSongBySearch = (title, interaction, channel) => {
             resource: audioResource,
             duration: videoFound.durationInSec
         });
-
-        interaction.reply(`> ✅ Added **[${videoFound.title}](${videoFound.url})** to the queue!!`);
 
         playlist.play(channel, {
             nodeOptions: {
