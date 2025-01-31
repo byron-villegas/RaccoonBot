@@ -11,7 +11,21 @@ const ytdl = require('@distube/ytdl-core');
 const globalCommands = require('./global-commands');
 
 const APPLICATION = process.env.APPLICATION;
-const youtubeCookies = process.env.YOUTUBE_COOKIES;
+
+const PROXIES = [
+    '152.26.229.42:9443',
+    '152.26.229.66:9443',
+    '152.26.229.88:9443',
+    '152.26.231.42:9443',
+    '152.26.231.77:9443',
+    '152.26.231.86:9443',
+    '177.234.241.25:999',
+    '177.234.241.26:999',
+    '177.234.241.27:999',
+    '177.234.241.30:999'
+]
+
+const youtubeAgent = ytdl.createAgent({ uri: PROXIES[Math.floor(Math.random() * PROXIES.length)] });
 
 const client = new Client({
     intents: [
