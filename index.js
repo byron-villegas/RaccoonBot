@@ -11,6 +11,7 @@ const ytdl = require('@distube/ytdl-core');
 const globalCommands = require('./global-commands');
 
 const APPLICATION = process.env.APPLICATION;
+const youtubeCookies = process.env.YOUTUBE_COOKIES;
 
 const client = new Client({
     intents: [
@@ -162,7 +163,13 @@ client.on('interactionCreate', async (interaction) => {
                     break;
                 }
 
-                ytdl.getBasicInfo(query).then(info => {
+                ytdl.getBasicInfo(query, {
+                    requestOptions: {
+                        headers: {
+                            cookie: youtubeCookies
+                        }
+                    }
+                }).then(info => {
                     console.log(`Song title ${info.videoDetails.title}`);
 
                     const videoStream = ytdl(query, {
@@ -171,7 +178,12 @@ client.on('interactionCreate', async (interaction) => {
                         liveBuffer: 1 << 62,
                         dlChunkSize: 0,
                         bitrate: 128,
-                        quality: 'lowest'
+                        quality: 'lowest',
+                        requestOptions: {
+                            headers: {
+                                cookie: youtubeCookies
+                            }
+                        }
                     });
 
                     const audioResource = createAudioResource(videoStream);
@@ -444,7 +456,12 @@ playSongBySearch = (title, interaction, channel) => {
             liveBuffer: 1 << 62,
             dlChunkSize: 0,
             bitrate: 128,
-            quality: 'lowest'
+            quality: 'lowest',
+            requestOptions: {
+                headers: {
+                    cookie: youtubeCookies
+                }
+            }
         });
 
         const audioResource = createAudioResource(videoStream);
