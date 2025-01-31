@@ -177,13 +177,7 @@ client.on('interactionCreate', async (interaction) => {
                     break;
                 }
 
-                ytdl.getBasicInfo(query, {
-                    requestOptions: {
-                        headers: {
-                            cookie: youtubeCookies
-                        }
-                    }
-                }).then(info => {
+                ytdl.getBasicInfo(query, { agent: youtubeAgent}).then(info => {
                     console.log(`Song title ${info.videoDetails.title}`);
 
                     const videoStream = ytdl(query, {
@@ -193,11 +187,7 @@ client.on('interactionCreate', async (interaction) => {
                         dlChunkSize: 0,
                         bitrate: 128,
                         quality: 'lowest',
-                        requestOptions: {
-                            headers: {
-                                cookie: youtubeCookies
-                            }
-                        }
+                        agent: youtubeAgent
                     });
 
                     const audioResource = createAudioResource(videoStream);
@@ -476,11 +466,7 @@ playSongBySearch = (title, interaction, channel) => {
             dlChunkSize: 0,
             bitrate: 128,
             quality: 'lowest',
-            requestOptions: {
-                headers: {
-                    cookie: youtubeCookies
-                }
-            }
+            agent: youtubeAgent
         });
 
         const audioResource = createAudioResource(videoStream);
