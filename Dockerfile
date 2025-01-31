@@ -14,7 +14,7 @@ WORKDIR /app
 COPY . .
 
 # Disable SSL for Test
-RUN npm install --strict-ssl=false
+RUN npm config set strict-ssl false
 
 # Install dependencies
 RUN npm install
