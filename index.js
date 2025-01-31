@@ -18,11 +18,7 @@ const PROXIES = [
     'http://152.26.229.88:9443',
     'http://152.26.231.42:9443',
     'http://152.26.231.77:9443',
-    'http://152.26.231.86:9443',
-    'http://177.234.241.25:999',
-    'http://177.234.241.26:999',
-    'http://177.234.241.27:999',
-    'http://177.234.241.30:999'
+    'http://152.26.231.86:9443'
 ]
 
 const youtubeAgent = ytdl.createProxyAgent({ uri:  PROXIES[Math.floor(Math.random() * PROXIES.length)] });
