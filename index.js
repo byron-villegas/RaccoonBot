@@ -285,6 +285,11 @@ client.on('interactionCreate', async (interaction) => {
             await interaction.reply('> ⏭️ The current song has been skipped.');
             break;
         case 'stop':
+            if (!queue) {
+                await interaction.reply('> ⚠️ This server does not have an active player session.');
+                break;
+            }
+
             queue.delete();
             playlist.tracks = [];
 
