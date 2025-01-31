@@ -13,6 +13,9 @@ WORKDIR /app
 # Copy the application
 COPY . .
 
+# Disable SSL for Test
+RUN npm install --strict-ssl=false
+
 # Install dependencies
 RUN npm install
 

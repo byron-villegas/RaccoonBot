@@ -27,9 +27,6 @@ const PROXIES = [
 
 const youtubeAgent = ytdl.createProxyAgent({ uri:  PROXIES[Math.floor(Math.random() * PROXIES.length)] });
 
-// Disable SSL certificate validation ONLY FOR TEST
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
-
 const client = new Client({
     intents: [
         GatewayIntentBits.Guilds,
