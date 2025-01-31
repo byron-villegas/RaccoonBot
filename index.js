@@ -25,7 +25,7 @@ const PROXIES = [
     '177.234.241.30:999'
 ]
 
-const youtubeAgent = ytdl.createAgent({ uri: PROXIES[Math.floor(Math.random() * PROXIES.length)] });
+const youtubeAgent = ytdl.createProxyAgent({ uri: PROXIES[Math.floor(Math.random() * PROXIES.length)] });
 
 const client = new Client({
     intents: [
