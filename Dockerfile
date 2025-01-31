@@ -8,7 +8,7 @@ RUN add-apt-repository ppa:tomtomtom/yt-dlp
 RUN apt-get update
 
 # Install yt-dlp
-RUN apt install yt-dlp  
+RUN apt install -y yt-dlp  
 
 # Install ffmpeg
 RUN apt-get install -y ffmpeg
