@@ -1,6 +1,12 @@
 # Use the official Node.js image as the base image
 FROM node:21.7.3
 
+# Update the package repository
+RUN apt-get update
+
+# Install the software-properties-common package
+RUN apt install -y software-properties-common
+
 # Add the yt-dlp repository
 RUN add-apt-repository ppa:tomtomtom/yt-dlp
 
