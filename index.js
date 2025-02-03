@@ -12,16 +12,6 @@ const globalCommands = require('./global-commands');
 
 const APPLICATION = process.env.APPLICATION;
 
-const PROXIES = [
-    'http://152.26.229.42:9443',
-    'http://152.26.229.66:9443',
-    'http://152.26.229.88:9443',
-    'http://152.26.231.42:9443',
-    'http://152.26.231.77:9443',
-    'http://152.26.231.86:9443'
-]
-
-const youtubeAgent = ytdl.createProxyAgent({ uri:  PROXIES[Math.floor(Math.random() * PROXIES.length)] });
 
 const client = new Client({
     intents: [
@@ -173,7 +163,7 @@ client.on('interactionCreate', async (interaction) => {
                     break;
                 }
 
-                ytdl.getBasicInfo(query, { agent: youtubeAgent}).then(info => {
+                ytdl.getBasicInfo(query).then(info => {
                     console.log(`Song title ${info.videoDetails.title}`);
 
                     const videoStream = ytdl(query, {
@@ -182,8 +172,7 @@ client.on('interactionCreate', async (interaction) => {
                         liveBuffer: 1 << 62,
                         dlChunkSize: 0,
                         bitrate: 128,
-                        quality: 'lowest',
-                        agent: youtubeAgent
+                        quality: 'lowest'
                     });
 
                     const audioResource = createAudioResource(videoStream);
@@ -464,8 +453,7 @@ playSongBySearch = (title, interaction, channel) => {
             liveBuffer: 1 << 62,
             dlChunkSize: 0,
             bitrate: 128,
-            quality: 'lowest',
-            agent: youtubeAgent
+            quality: 'lowest'
         });
 
         const audioResource = createAudioResource(videoStream);
