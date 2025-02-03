@@ -9,9 +9,22 @@ const play = require('play-dl');
 const SpotifyWebApi = require('spotify-web-api-node');
 const ytdl = require('@distube/ytdl-core');
 const globalCommands = require('./global-commands');
+const fs = require('fs');
 
 const APPLICATION = process.env.APPLICATION;
 
+// Load cookies from cookies.json
+const cookiesPath = path.join(__dirname, process.env.COOKIES_PATH);
+let youtubeCookies = [];
+
+try {
+    const cookiesData = fs.readFileSync(cookiesPath, 'utf8');
+    youtubeCookies = JSON.parse(cookiesData);
+} catch (err) {
+    console.error('Error loading cookies:', err);
+}
+
+const youtubeAgent = ytdl.createAgent(youtubeCookies);
 
 const client = new Client({
     intents: [
@@ -163,7 +176,7 @@ client.on('interactionCreate', async (interaction) => {
                     break;
                 }
 
-                ytdl.getBasicInfo(query).then(info => {
+                ytdl.getBasicInfo(query, { agent: youtubeAgent }).then(info => {
                     console.log(`Song title ${info.videoDetails.title}`);
 
                     const videoStream = ytdl(query, {
@@ -172,7 +185,8 @@ client.on('interactionCreate', async (interaction) => {
                         liveBuffer: 1 << 62,
                         dlChunkSize: 0,
                         bitrate: 128,
-                        quality: 'lowest'
+                        quality: 'lowest',
+                        agent: youtubeAgent
                     });
 
                     const audioResource = createAudioResource(videoStream);
@@ -453,7 +467,8 @@ playSongBySearch = (title, interaction, channel) => {
             liveBuffer: 1 << 62,
             dlChunkSize: 0,
             bitrate: 128,
-            quality: 'lowest'
+            quality: 'lowest',
+            agent: youtubeAgent
         });
 
         const audioResource = createAudioResource(videoStream);
