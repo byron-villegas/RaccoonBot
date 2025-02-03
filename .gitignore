@@ -1,6 +1,9 @@
 # node modules
 /node_modules
 
+# Cargo
+/target
+
 # dotenv environment variable files
 .env
 

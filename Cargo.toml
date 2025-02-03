@@ -1,0 +1,21 @@
+[package]
+name = "raccoonbot"
+description = "A Discord music bot for fun"
+version = "1.0.0"
+authors = ["Byron Villegas Moya"]
+keywords = ["discord", "bot", "music"]
+edition = "2021"
+rust-version = "1.81.0"
+repository = "https://github.com/byron-villegas/RaccoonBot"
+readme = "README.md"
+license-file = "LICENSE.txt"
+
+[dependencies]
+serenity = "0.12"
+tokio = { version = "1.21.2", features = ["macros", "rt-multi-thread"] }
+dotenv = "0.15"
+rand = "0.8"
+
+[[bin]]
+name = "raccoonbot"
+path = "src/main.rs"
