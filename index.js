@@ -14,7 +14,8 @@ const fs = require('fs');
 const APPLICATION = process.env.APPLICATION;
 
 // Load cookies from cookies.json
-const cookiesPath = path.join(__dirname, process.env.COOKIES_PATH);
+const cookiesPath = process.env.COOKIES_PATH;
+
 let youtubeCookies = [];
 
 try {
