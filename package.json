@@ -2,20 +2,34 @@
   "name": "racconbot",
   "version": "1.0.0",
   "description": "Discord raccoon bot for play music",
+  "author": {
+    "name": "Byron Villegas",
+    "email": "byronvillegasm@gmail.com"
+  },
+  "license": "MIT",
+  "keywords": [
+    "Discord",
+    "Music",
+    "BOT"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/byron-villegas/racconbot"
+  },
+  "bugs": {
+    "url": "https://github.com/byron-villegas/racconbot/issues"
+  },
+  "homepage": "https://github.com/byron-villegas/racconbot",
+  "engines": {
+    "node": ">=v21.7.3"
+  },
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "discord",
-    "bot",
-    "music"
-  ],
-  "author": "Byron Villegas Moya",
-  "license": "MIT",
   "dependencies": {
     "@discordjs/voice": "^0.18.0",
-    "@distube/ytdl-core": "^4.16.0",
+    "@distube/ytdl-core": "^4.16.4",
     "colors": "^1.4.0",
     "discord-player": "^7.1.0",
     "discord.js": "^14.17.3",
