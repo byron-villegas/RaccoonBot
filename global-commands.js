@@ -44,6 +44,10 @@ const globalCommands = [
                 required: true
             }
         ]
+    },
+    {
+        name: 'audio',
+        description: 'Play an audio file from the server randomly'
     }
 ]
 

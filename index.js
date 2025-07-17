@@ -345,6 +345,54 @@ client.on('interactionCreate', async (interaction) => {
 
             await interaction.reply('> 🍀 You have been lucky.');
             break;
+        case 'audio':
+            if (!channel) {
+                await interaction.reply('> ⚠️ You need to be in a voice channel.');
+                return;
+            }
+
+            // Connect to the voice channel
+            const connection = joinVoiceChannel({
+                channelId: channel.id,
+                guildId: channel.guild.id,
+                adapterCreator: channel.guild.voiceAdapterCreator,
+            });
+
+            // Create an audio player and play a random audio file
+            const audioFiles = fs.readdirSync(path.join(__dirname, 'sounds'));
+
+            let audios = [];
+
+            audioFiles.forEach(file => {
+
+                let isDirectory = fs.lstatSync(path.join(__dirname, 'sounds', file)).isDirectory();
+
+                // check if the file is a directory
+                if (isDirectory) {
+                    let files = fs.readdirSync(path.join(__dirname, 'sounds', file));
+                    files.forEach(f => {
+                        audios.push(path.join(file, f));
+                    });
+                } else {
+                    audios.push(file);
+                }
+            });
+
+            const randomAudioFile = audios[Math.floor(Math.random() * audios.length)];
+            const resource = createAudioResource(path.join(__dirname, 'sounds', randomAudioFile));
+            const audioPlayer = createAudioPlayer();
+            connection.subscribe(audioPlayer);
+            audioPlayer.play(resource);
+            audioPlayer.on('stateChange', (oldState, newState) => {
+                if (newState.status === 'idle') { // If the audio player is idle, end the connection
+                    connection.destroy();
+                }
+            });
+
+            const audioFileName = path.basename(randomAudioFile);
+
+            await interaction.reply(`> 🎵 Now playing **${audioFileName}** in **${channel.name}** voice channel.`);
+            break;
     }
 });
 
