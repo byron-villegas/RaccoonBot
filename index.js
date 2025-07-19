@@ -361,6 +361,11 @@ client.on('interactionCreate', async (interaction) => {
             // Create an audio player and play a random audio file
             const audioFiles = fs.readdirSync(path.join(__dirname, 'sounds'));
 
+            if (audioFiles.length === 0) {
+                await interaction.reply('> ⚠️ No audio files found in the sounds directory.');
+                return;
+            }
+
             let audios = [];
 
             audioFiles.forEach(file => {
